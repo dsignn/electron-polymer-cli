@@ -1,3 +1,10 @@
+#!/usr/bin/env node
+
+'use strict';
+
+process.title = 'electron-polymer';
+
+
 const chalk = require('chalk');
 const clear = require('clear');
 const figlet = require('figlet');

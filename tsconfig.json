@@ -1,0 +1,19 @@
+
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "es2019",
+    "moduleResolution": "node",
+    "outDir": ".",
+    "rootDir" : ".",
+    "lib": [
+      "es2019",
+      "dom",
+      "es6",
+      "es5"
+    ]
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
