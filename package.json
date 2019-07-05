@@ -4,6 +4,7 @@
   "description": "Tool writed with node, used to create module for the player",
   "main": "index.js",
   "scripts": {
+    "run": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,16 +25,9 @@
   },
   "homepage": "https://github.com/fluidnext/electron-polymer-cli#readme",
   "dependencies": {
-    "@octokit/rest": "^14.0.5",
-    "chalk": "^2.3.0",
-    "clear": "0.0.1",
-    "clui": "^0.3.6",
-    "configstore": "^3.1.1",
-    "figlet": "^1.2.0",
-    "inquirer": "^5.0.1",
-    "lodash": "^4.17.4",
-    "minimist": "^1.2.0",
-    "simple-git": "^1.89.0",
-    "touch": "^3.1.0"
+    "chalk": "^2.4.2",
+    "clear": "^0.1.0",
+    "commander": "^2.20.0",
+    "figlet": "^1.2.3"
   }
 }

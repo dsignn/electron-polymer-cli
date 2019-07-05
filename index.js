@@ -1,22 +1,43 @@
 const chalk = require('chalk');
 const clear = require('clear');
 const figlet = require('figlet');
+const commander = require('commander');
+const program = new commander.Command();
 
-// LIB
-const files = require('./lib/files.js');
-const inquirer = require('./lib/inquirer.js');
+// COMMANDS
+const files = require('./command/files.js');
 
-const run = async () => {
-    const credentials = await inquirer.askIfIHappy();
-    console.log(credentials);
+program.version('0.0.1');
+
+program
+    .command('list')
+    .description('List comands')
+    .action(() => {
+        console.log('setup');
+    });
+
+program
+    .command('test')
+    .description('Test comands')
+    .action(() => {
+        console.log('test');
+    })
+
+let findCmd = process.argv.find((element) => { return 'list' === element }) ||
+    process.argv.find((element) => { return 'test' === element });
+
+console.log(process.argv);
+console.log(findCmd);
+
+switch (findCmd) {
+    case 'list' :
+    case 'test' :
+        program.parse(process.argv);
+        break;
+    default:
+        console.log(
+            chalk.green(
+                figlet.textSync('FLUID NEXT', { horizontalLayout: 'full' })
+            )
+        );
 }
-
-clear();
-
-console.log(
-    chalk.green(
-        figlet.textSync('FLUID', { horizontalLayout: 'full' })
-    )
-);
-
-run();
