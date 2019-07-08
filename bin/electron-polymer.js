@@ -32,6 +32,6 @@ if (!semver.satisfies(process.version, config.engines.node)) {
     process.exit(1);
 }
 
-const main = new Main(config);
+const main = new Main(config, process);
 
-main.process(process);
+main.process();

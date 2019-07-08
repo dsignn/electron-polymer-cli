@@ -3,8 +3,9 @@
  */
 import {Command} from "commander";
 import {CommandInterface} from "./command/CommandInterface";
+import {ProcessAware, ProcessAwareInterface} from "./process";
 
-export class Application {
+export class Application extends ProcessAware implements ProcessAwareInterface {
 
     /**
      *
@@ -22,24 +23,23 @@ export class Application {
 
     /**
      *
-     */
-    private _process: any;
-
-    /**
      * @param {object} config  package.json object
+     * @param process
      */
-    constructor(config) {
+    constructor(config, process) {
+        super();
         this._program.version(config.version, '-v, --version');
+        this.setProcess(process);
     }
 
     /**
      *
      */
-    process() {
-        if (!this._process) {
+    execProcess() {
+        if (!this.process) {
             return;
         }
-        this._program.parse(this._process.argv);
+        this._program.parse(this.getProcess().argv);
     }
 
     /**
@@ -49,13 +49,13 @@ export class Application {
     hasCommandInProcess() {
        let find = undefined;
 
-       if (!this._process) {
+       if (!this.process) {
            return find;
        }
 
        for (let cont = 0; this._commands.length > cont; cont++) {
 
-           find = find || this._process.argv.find((element) => {
+           find = find || this.getArgs().find((element) => {
 
                switch (true) {
                    case this._commands[cont].name.split(' ')[0] === element:
@@ -77,13 +77,13 @@ export class Application {
     isThirdParameterOption() {
         let find = false;
 
-        if (!this._process) {
+        if (!this.process) {
             return find;
         }
 
         switch (true) {
-            case this._process.argv[2].charAt(0) === '-':
-            case this._process.argv[2].substring(0,2) === '--':
+            case this.getArgsByIndex(2) !== null && this.getArgsByIndex(2).charAt(0) === '-':
+            case this.getArgsByIndex(2) !== null && this.getArgsByIndex(2).substring(0,2) === '--':
                 find = true;
                 break
         }
@@ -113,22 +113,6 @@ export class Application {
      */
     getCommands() {
         return this._commands;
-    }
-
-    /**
-     * @param process
-     * @return {this}
-     */
-    setProcess(process) {
-        this._process = process;
-        return this;
-    }
-
-    /**
-     * @return {any}
-     */
-    getProcess() {
-        return this._process;
     }
 
     /**

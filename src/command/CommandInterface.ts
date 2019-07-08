@@ -1,7 +1,9 @@
 /**
  *
  */
-export interface CommandInterface {
+import {ProcessAwareInterface} from "../process";
+
+export interface CommandInterface extends ProcessAwareInterface {
 
     /**
      * @type string

@@ -32,6 +32,7 @@
   },
   "homepage": "https://github.com/fluidnext/electron-polymer-cli#readme",
   "dependencies": {
+    "camelcase": "^5.3.1",
     "chalk": "^2.4.2",
     "clear": "^0.1.0",
     "commander": "^2.20.0",

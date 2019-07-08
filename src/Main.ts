@@ -14,15 +14,28 @@ export class Main {
     private _application: Application;
 
     /**
+     *
      * @param {object} config  package.json object
+     * @param process
      */
-    constructor(config) {
+    constructor(config, process) {
 
-        this._application = new Application(config);
+        this._application = new Application(config, process);
 
-        this._application.addCommand(new CreateModuleCommand());
+        /**
+         * @type {CreateModuleCommand}
+         */
+        let createModuleCommand = new CreateModuleCommand();
+        createModuleCommand.setProcess(process);
+        this._application.addCommand(createModuleCommand);
+
+        /**
+         * @type {ListCommand}
+         */
         let helpCommand = new ListCommand();
+        helpCommand.setProcess(process);
         this._application.addCommand(helpCommand);
+
         helpCommand.setCommands(this._application.getCommands());
     }
 
@@ -30,9 +43,7 @@ export class Main {
      *
      * @param process
      */
-    process(process: any) {
-        this._application.setProcess(process);
-
+    process() {
         if (this._application.hasCommandInProcess() === undefined && !this._application.isThirdParameterOption()) {
 
             if (this._application.getProcess().argv[2]) {
@@ -45,6 +56,6 @@ export class Main {
             this._application.getProcess().argv.splice(2, 0, 'list')
         }
 
-        this._application.process();
+        this._application.execProcess();
     }
 }

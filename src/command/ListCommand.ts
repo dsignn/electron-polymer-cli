@@ -1,9 +1,10 @@
 import {CommandInterface} from "./CommandInterface";
+import {ProcessAware} from "../process";
 
 /**
  *
  */
-export class ListCommand implements CommandInterface {
+export class ListCommand extends ProcessAware implements CommandInterface {
 
 
     description: string = 'List command';
