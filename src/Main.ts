@@ -4,6 +4,7 @@
 
 import {Application} from "./Application";
 import {CreateModuleCommand, ListCommand} from "./command/index";
+import * as process from "process";
 export class Main {
 
     /**
@@ -30,13 +31,20 @@ export class Main {
      * @param process
      */
     process(process: any) {
+        this._application.setProcess(process);
 
-        let cmd = this._application.hasCommandInProcess(process);
+        if (this._application.hasCommandInProcess() === undefined && !this._application.isThirdParameterOption()) {
 
-        if (cmd === undefined) {
-            process.argv.push('list');
+            if (this._application.getProcess().argv[2]) {
+                const chalk = require('chalk');
+                console.log(
+                    chalk.red.underline.bold(`Command "${this._application.getProcess().argv[2].split(' ')[0]}" not found\n`)
+                );
+            }
+            // WORKAROUND to set default
+            this._application.getProcess().argv.splice(2, 0, 'list')
         }
 
-        this._application.process(process);
+        this._application.process();
     }
 }

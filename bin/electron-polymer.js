@@ -29,10 +29,9 @@ if (!semver.satisfies(process.version, config.engines.node)) {
     console.log(
         chalk.red(`Electron Polymer CLI requires at least Node v ${rawVersion} You have ${process.version}`)
     );
-
-
     process.exit(1);
 }
 
 const main = new Main(config);
+
 main.process(process);

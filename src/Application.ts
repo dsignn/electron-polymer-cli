@@ -21,6 +21,11 @@ export class Application {
     private _program: Command = new (require('commander')).Command();
 
     /**
+     *
+     */
+    private _process: any;
+
+    /**
      * @param {object} config  package.json object
      */
     constructor(config) {
@@ -28,23 +33,62 @@ export class Application {
     }
 
     /**
-     * @param {process} process
+     *
      */
-    process(process: any) {
-        this._program.parse(process.argv);
+    process() {
+        if (!this._process) {
+            return;
+        }
+        this._program.parse(this._process.argv);
     }
 
     /**
      * @param process
      * @return {string|undefined}
      */
-    hasCommandInProcess(process: any) {
+    hasCommandInProcess() {
        let find = undefined;
+
+       if (!this._process) {
+           return find;
+       }
+
        for (let cont = 0; this._commands.length > cont; cont++) {
-           find = find || process.argv.find((element) => { return this._commands[cont].name === element })
+
+           find = find || this._process.argv.find((element) => {
+
+               switch (true) {
+                   case this._commands[cont].name.split(' ')[0] === element:
+                   case this._commands[cont].alias === element:
+                       find = element;
+                       break;
+               }
+
+               return find;
+           })
        }
 
        return find;
+    }
+
+    /**
+     * @return {boolean}
+     */
+    isThirdParameterOption() {
+        let find = false;
+
+        if (!this._process) {
+            return find;
+        }
+
+        switch (true) {
+            case this._process.argv[2].charAt(0) === '-':
+            case this._process.argv[2].substring(0,2) === '--':
+                find = true;
+                break
+        }
+
+        return find;
     }
 
     /**
@@ -55,6 +99,8 @@ export class Application {
 
         this._program.command(command.name)
             .description(command.description)
+            .alias(command.alias)
+            .option(command.option)
             .action(command.action.bind(command));
 
         this._commands.push(command);
@@ -67,5 +113,28 @@ export class Application {
      */
     getCommands() {
         return this._commands;
+    }
+
+    /**
+     * @param process
+     * @return {this}
+     */
+    setProcess(process) {
+        this._process = process;
+        return this;
+    }
+
+    /**
+     * @return {any}
+     */
+    getProcess() {
+        return this._process;
+    }
+
+    /**
+     * @return {commander.Command}
+     */
+    getProgram() {
+        return this._program;
     }
 }

@@ -1,4 +1,5 @@
 import {CommandInterface} from "./CommandInterface";
+import {Command} from "commander";
 
 /**
  *
@@ -8,11 +9,16 @@ export class CreateModuleCommand implements CommandInterface {
 
     description: string = 'Create command';
 
-    name: string = 'create-module';
+    name: string = 'create-module --name <name>';
 
-    option: string;
+    alias: string = 'crc';
 
-    action() {
-        console.log('suca con sto modulo');
+    option: string = '-t, --test <test>';
+
+    /**
+     * @param cmd
+     */
+    action(cmd : Command) {
+        console.log('suca con sto modulo', cmd.g);
     }
 }

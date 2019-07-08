@@ -16,5 +16,13 @@ export interface CommandInterface {
      */
     description: string;
 
-    action();
+    /**
+     * @type string
+     */
+    alias: string;
+
+    /**
+     * @param args
+     */
+    action(...args: any[]);
 }
