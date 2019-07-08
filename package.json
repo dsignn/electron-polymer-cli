@@ -1,5 +1,5 @@
 {
-  "name": "electron-polymer-cli",
+  "name": "@fluidnext/electron-polymer-cli",
   "version": "1.0.0",
   "description": "Tool writed with node, used to create module for the player",
   "main": "bin/electron-polymer.js",
