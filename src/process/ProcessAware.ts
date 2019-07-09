@@ -48,4 +48,39 @@ export class ProcessAware {
         }
         return arg
     }
+
+    /**
+     * @return {string}
+     */
+    getRootPath() {
+        let path = '';
+        if (this.getProcess()) {
+            path = this.getProcess().cwd();
+        }
+        return path
+    }
+
+    /**
+     * @return {string}
+     */
+    getApplicationPath() {
+        const path = require('path');
+        return `${this.getRootPath()}${path.sep}app`;
+    }
+
+    /**
+     * @return {string}
+     */
+    getConfigPath() {
+        const path = require('path');
+        return `${this.getApplicationPath()}${path.sep}config`;
+    }
+
+    /**
+     * @return {string}
+     */
+    getModulesPath() {
+        const path = require('path');
+        return `${this.getApplicationPath()}${path.sep}module`;
+    }
 }

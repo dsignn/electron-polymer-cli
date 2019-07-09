@@ -28,7 +28,7 @@
     "url": "https://github.com/fluidnext/electron-polymer-cli/issues"
   },
   "engines": {
-    "node": ">=8.16.0"
+    "node": ">=10.16.0"
   },
   "homepage": "https://github.com/fluidnext/electron-polymer-cli#readme",
   "dependencies": {

@@ -3,7 +3,7 @@
  */
 
 import {Application} from "./Application";
-import {CreateModuleCommand, ListCommand} from "./command/index";
+import {CreateModuleCommand, DeleteModuleCommand, ListCommand} from "./command/index";
 import * as process from "process";
 export class Main {
 
@@ -28,6 +28,14 @@ export class Main {
         let createModuleCommand = new CreateModuleCommand();
         createModuleCommand.setProcess(process);
         this._application.addCommand(createModuleCommand);
+
+
+        /**
+         * @type {CreateModuleCommand}
+         */
+        let deleteModuleCommand = new DeleteModuleCommand();
+        deleteModuleCommand.setProcess(process);
+        this._application.addCommand(deleteModuleCommand);
 
         /**
          * @type {ListCommand}
