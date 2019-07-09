@@ -37,7 +37,7 @@ export class ListCommand extends ProcessAware implements CommandInterface {
         console.log(chalk.green.underline.bold('List commamd\n'));
 
         for(let cont = 0; this._commands.length > cont; cont++) {
-            console.log(`    ${this._commands[cont].name}: ${this._commands[cont].description}`);
+            console.log(`    ${this._commands[cont].alias ? this._commands[cont].alias+'|' : ''}${this._commands[cont].name}: ${this._commands[cont].description}`);
         }
 
         console.log(chalk.underline('\n'));

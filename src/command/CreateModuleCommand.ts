@@ -28,8 +28,8 @@ export class CreateModuleCommand extends ProcessAware implements CommandInterfac
             );
             this.getProcess().exit(1);
         }
-        console.log(this.templateConfig(nameModule));
-        console.log(nameModule);
+
+        this._exist(nameModule);
     }
 
     /**
@@ -45,17 +45,39 @@ export class CreateModuleCommand extends ProcessAware implements CommandInterfac
         return isValid
     }
 
-    /**
-     * @param {string} nameModule
-     */
-    templateIndex(nameModule: string) {
-
+    _exist(name) {
+        const fs = require('fs');
+        console.log(name, __dirname)
+        console.log(name, this.getProcess().cwd())
     }
 
     /**
      * @param {string} nameModule
      */
     templateConfig(nameModule: string) {
+        const camelCase = require('camelcase');
+        let nameModuleCamelCase = camelCase(nameModule);
+
+        let template = `
+            /**
+             *
+             */
+            class ${nameModuleCamelCase.charAt(0).toUpperCase() + nameModuleCamelCase.slice(1)}Config extends require("@fluidnext/library").container.ContainerAware {
+            
+                init() {
+
+                    console.log('Init ${nameModule}');
+                }
+            }
+            module.exports = ${nameModuleCamelCase.charAt(0).toUpperCase() + nameModuleCamelCase.slice(1)}Config;
+        `;
+        return template;
+    }
+
+    /**
+     * @param {string} nameModule
+     */
+    templateEntryPoint(nameModule: string) {
         const camelCase = require('camelcase');
         let nameModuleCamelCase = camelCase(nameModule);
 
@@ -72,8 +94,25 @@ export class CreateModuleCommand extends ProcessAware implements CommandInterfac
                         \`;
                     }
                 }
-                window.customElements.define(${nameModule}, ${nameModuleCamelCase.charAt(0).toUpperCase() + nameModuleCamelCase.slice(1)}Index);
-        `
+                window.customElements.define(${nameModule}-index, ${nameModuleCamelCase.charAt(0).toUpperCase() + nameModuleCamelCase.slice(1)}Index);
+        `;
         return template;
+    }
+
+    /**
+     * @param {string} nameModule
+     */
+    templatePackageJson(nameModule: string) {
+        let UcFirstNameModule = nameModule.charAt(0).toUpperCase() + nameModule.slice(1);
+        let template =   {
+            "title" : UcFirstNameModule.replace('-', ' '),
+            "name": nameModule,
+            "icon" : `${nameModule}:menu`,
+            "configEntryPoint": "config.js",
+            "entryPoint" : {
+                "name" : `${nameModule}-index`,
+                "path" : "index.js"
+            }
+        }
     }
 }
