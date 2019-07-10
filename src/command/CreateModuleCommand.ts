@@ -1,15 +1,12 @@
 import {CommandInterface} from "./CommandInterface";
 import {Command} from "commander";
 import {ProcessAware} from "../process";
+import {AbstractModuleCommand} from "./AbstractModuleCommand";
 
 /**
  *
  */
-export class CreateModuleCommand extends ProcessAware implements CommandInterface {
-
-    static REGEX_NAME = '^[a-z0-9-]*$';
-
-    static REGEX_COMMENT = '(\\/\\*[\\w\\\'\\s\\r\\n\\*]*\\*\\/)|(\\/\\/[\\w\\s\\\']*)|(\\<![\\-\\-\\s\\w\\>\\/]*\\>)';
+export class CreateModuleCommand extends AbstractModuleCommand implements CommandInterface {
 
     description: string = 'Create module';
 
@@ -22,14 +19,14 @@ export class CreateModuleCommand extends ProcessAware implements CommandInterfac
     /**
      * @param {string} nameModule
      */
-    action(nameModule : string) {
+    public action(nameModule : string) {
         /**
          * Validate name module
          */
         if (!this._validateName(nameModule)) {
             const chalk = require('chalk');
             console.log(
-                chalk.red.underline.bold(`Invalid name accept "${CreateModuleCommand.REGEX_NAME}" given "${nameModule}"\n`)
+                chalk.red.underline.bold(`Invalid name accept "${AbstractModuleCommand.REGEX_NAME}" given "${nameModule}"\n`)
             );
             this.getProcess().exit(1);
         }
@@ -71,58 +68,9 @@ export class CreateModuleCommand extends ProcessAware implements CommandInterfac
     }
 
     /**
-     * @param {string} name
-     * @return {boolean}
-     * @private
-     */
-    _validateName(name) {
-        let isValid = false;
-        const regexp =  RegExp(CreateModuleCommand.REGEX_NAME, 'gm');
-        if ((regexp.exec(name)) !== null) {
-            isValid = true;
-        }
-        return isValid
-    }
-
-    /**
-     * @param name
-     * @return {boolean}
-     * @private
-     */
-    _validateCurrentDirectory(name) {
-        const fs = require('fs');
-        let isValid = false;
-
-        if (fs.existsSync(this.getApplicationPath()) && fs.existsSync(this.getModulesPath())) {
-            isValid = true;
-        }
-
-        return isValid;
-    }
-
-    /**
-     * @param name
-     * @private
-     */
-    _notExistModule(name) {
-        const fs = require('fs');
-        let isValid = true;
-        let content = fs.readdirSync(this.getModulesPath());
-        for (let cont = 0; content.length > cont; cont++) {
-            if (name === content[cont]) {
-                isValid = false;
-                break;
-            }
-        }
-
-        return isValid;
-    }
-
-
-    /**
      * @param {string} nameModule
      */
-    templateConfig(nameModule: string) {
+    public templateConfig(nameModule: string) {
         const camelCase = require('camelcase');
         let nameModuleCamelCase = camelCase(nameModule);
 
@@ -145,7 +93,7 @@ module.exports = ${nameModuleCamelCase.charAt(0).toUpperCase() + nameModuleCamel
     /**
      * @param {string} nameModule
      */
-    templateEntryPoint(nameModule: string) {
+    public templateEntryPoint(nameModule: string) {
         const camelCase = require('camelcase');
         let nameModuleCamelCase = camelCase(nameModule);
 
@@ -172,10 +120,10 @@ window.customElements.define("${nameModule}-index", ${nameModuleCamelCase.charAt
     /**
      * @param {string} nameModule
      */
-    templatePackageJson(nameModule: string, type: string = 'string') {
+    public templatePackageJson(nameModule: string, type: string = 'string') {
         let UcFirstNameModule = nameModule.charAt(0).toUpperCase() + nameModule.slice(1);
         let template =   {
-            "title" : UcFirstNameModule.replace('-', ' '),
+            "title" : UcFirstNameModule.replace(new RegExp('-', 'g'), ' '),
             "name": nameModule,
             "icon" : `${nameModule}:menu`,
             "configEntryPoint": "config.js",
@@ -197,7 +145,7 @@ window.customElements.define("${nameModule}-index", ${nameModuleCamelCase.charAt
     /**
      * @param {string} nameModule
      */
-    templateIcon(nameModule: string) {
+    public templateIcon(nameModule: string) {
         const camelCase = require('camelcase');
         let nameModuleCamelCase = camelCase(nameModule);
 
@@ -209,7 +157,7 @@ import {html} from '@polymer/polymer/lib/utils/html-tag.js';
 
 
 const template = html\`
-<iron-iconset-svg name="${nameModuleCamelCase}" size="24">
+<iron-iconset-svg name="${nameModule}" size="24">
     <svg>
         <defs>
             <g id="menu"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></g>       
@@ -218,7 +166,7 @@ const template = html\`
 </iron-iconset-svg>\`;
 
 document.head.appendChild(template.content);
-window.customElements.define('${nameModuleCamelCase}-icons', class ${nameModuleCamelCase.charAt(0).toUpperCase() + nameModuleCamelCase.slice(1)}Icons extends HTMLElement {});
+window.customElements.define('${nameModule}-icons', class ${nameModuleCamelCase.charAt(0).toUpperCase() + nameModuleCamelCase.slice(1)}Icons extends HTMLElement {});
 `;
 
         return template;
@@ -229,7 +177,7 @@ window.customElements.define('${nameModuleCamelCase}-icons', class ${nameModuleC
      * @param {string} name
      * @private
      */
-    _updateConfigFiles(name: string) {
+    protected _updateConfigFiles(name: string) {
         const fs = require('fs');
         const path = require('path');
         let content = fs.readdirSync(this.getConfigPath());
@@ -246,21 +194,25 @@ window.customElements.define('${nameModuleCamelCase}-icons', class ${nameModuleC
         }
     }
 
-    _updateImportDev(nameModule) {
+    /**
+     *
+     * @param {string} name
+     * @private
+     */
+    protected _updateImportDev(nameModule) {
         const fs = require('fs');
         const path = require('path');
+        const regexp = RegExp(AbstractModuleCommand.REGEX_COMMENT,'g');
 
         let importPathDev = `${this.getApplicationPath()}${path.sep}development${path.sep}dashboard${path.sep}import.js`;
         let body = fs.readFileSync(importPathDev).toString();
 
-        const regexp = RegExp(CreateModuleCommand.REGEX_COMMENT,'g');
-        //let match = body.matchAll(regex);
         let matches;
         let include;
         let index;
         while ((matches = regexp.exec(body)) !== null) {
 
-            if (matches[0].includes('boot application', )) {
+            if (matches[0].includes('boot application')) {
                 index = body.indexOf(matches[0]);
                 include =
 `/**
@@ -273,8 +225,11 @@ import '../../module/${nameModule}/element/icons/icons'
  */
  
 `;
-                fs.writeFileSync(importPathDev, [body.slice(0, index), include, body.slice(index)].join(''));
             }
+        }
+
+        if (index > 0) {
+            fs.writeFileSync(importPathDev, [body.slice(0, index), include, body.slice(index)].join(''));
         }
     }
 }

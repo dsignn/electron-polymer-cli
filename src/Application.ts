@@ -35,7 +35,7 @@ export class Application extends ProcessAware implements ProcessAwareInterface {
     /**
      *
      */
-    execProcess() {
+    public execProcess() {
         if (!this.process) {
             return;
         }
@@ -46,7 +46,7 @@ export class Application extends ProcessAware implements ProcessAwareInterface {
      * @param process
      * @return {string|undefined}
      */
-    hasCommandInProcess() {
+    public hasCommandInProcess() {
        let find = undefined;
 
        if (!this.process) {
@@ -74,7 +74,7 @@ export class Application extends ProcessAware implements ProcessAwareInterface {
     /**
      * @return {boolean}
      */
-    isThirdParameterOption() {
+    public isThirdParameterOption() {
         let find = false;
 
         if (!this.process) {
@@ -82,8 +82,28 @@ export class Application extends ProcessAware implements ProcessAwareInterface {
         }
 
         switch (true) {
-            case this.getArgsByIndex(2) !== null && this.getArgsByIndex(2).charAt(0) === '-':
-            case this.getArgsByIndex(2) !== null && this.getArgsByIndex(2).substring(0,2) === '--':
+            case this.getArgsByIndex(2).charAt(0) === '-':
+            case this.getArgsByIndex(2).substring(0,2) === '--':
+                find = true;
+                break
+        }
+
+        return find;
+    }
+
+    /**
+     * @param {string} start
+     * @return {boolean}
+     */
+    public startThirdParameterOptionWith(start) {
+        let find = false;
+
+        if (!this.process) {
+            return find;
+        }
+
+        switch (true) {
+            case this.getArgsByIndex(2).includes(start) === true:
                 find = true;
                 break
         }
@@ -95,7 +115,7 @@ export class Application extends ProcessAware implements ProcessAwareInterface {
      * @param {CommandInterface} command
      * @return {Main}
      */
-    addCommand(command: CommandInterface) {
+    public addCommand(command: CommandInterface) {
 
         this._program.command(command.name)
             .description(command.description)
@@ -111,14 +131,14 @@ export class Application extends ProcessAware implements ProcessAwareInterface {
     /**
      * @return {Array<CommandInterface>}
      */
-    getCommands() {
+    public getCommands() {
         return this._commands;
     }
 
     /**
      * @return {commander.Command}
      */
-    getProgram() {
+    public getProgram() {
         return this._program;
     }
 }

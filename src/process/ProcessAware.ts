@@ -13,7 +13,7 @@ export class ProcessAware {
      * @param process
      * @return {ProcessAware}
      */
-    setProcess(process: any) {
+    public setProcess(process: any) {
         this.process = process;
         return this;
     }
@@ -21,14 +21,14 @@ export class ProcessAware {
     /**
      * @return {any}
      */
-    getProcess() {
+    public getProcess() {
         return this.process;
     }
 
     /**
      * @return {Array<any>}
      */
-    getArgs() {
+    public getArgs() {
         let args = [];
         if (this.process) {
             args = this.process.argv;
@@ -38,10 +38,10 @@ export class ProcessAware {
 
     /**
      * @param {number} index
-     * @return {string|null}
+     * @return {string}
      */
-    getArgsByIndex(index) {
-        let arg = null;
+    public getArgsByIndex(index) {
+        let arg = '';
 
         if (this.process && this.process.argv && this.process.argv[index]) {
             arg = this.process.argv[index];
@@ -52,7 +52,7 @@ export class ProcessAware {
     /**
      * @return {string}
      */
-    getRootPath() {
+    public getRootPath() {
         let path = '';
         if (this.getProcess()) {
             path = this.getProcess().cwd();
@@ -63,7 +63,7 @@ export class ProcessAware {
     /**
      * @return {string}
      */
-    getApplicationPath() {
+    public getApplicationPath() {
         const path = require('path');
         return `${this.getRootPath()}${path.sep}app`;
     }
@@ -71,7 +71,7 @@ export class ProcessAware {
     /**
      * @return {string}
      */
-    getConfigPath() {
+    public getConfigPath() {
         const path = require('path');
         return `${this.getApplicationPath()}${path.sep}config`;
     }
@@ -79,7 +79,7 @@ export class ProcessAware {
     /**
      * @return {string}
      */
-    getModulesPath() {
+    public getModulesPath() {
         const path = require('path');
         return `${this.getApplicationPath()}${path.sep}module`;
     }

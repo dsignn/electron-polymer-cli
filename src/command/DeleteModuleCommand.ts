@@ -1,13 +1,13 @@
 import {CommandInterface} from "./CommandInterface";
 import {Command} from "commander";
 import {ProcessAware} from "../process";
+import {FsUtils} from "../util";
+import {AbstractModuleCommand} from "./AbstractModuleCommand";
 
 /**
  *
  */
-export class DeleteModuleCommand extends ProcessAware implements CommandInterface {
-
-    static REGEX_NAME = /^[a-z0-9-]*$/gm;
+export class DeleteModuleCommand extends AbstractModuleCommand implements CommandInterface {
 
     description: string = 'Create module';
 
@@ -27,7 +27,7 @@ export class DeleteModuleCommand extends ProcessAware implements CommandInterfac
         if (!this._validateName(nameModule)) {
             const chalk = require('chalk');
             console.log(
-                chalk.red.underline.bold(`Invalid name accept "${DeleteModuleCommand.REGEX_NAME}" given "${nameModule}"\n`)
+                chalk.red.underline.bold(`Invalid name accept "${AbstractModuleCommand.REGEX_NAME}" given "${nameModule}"\n`)
             );
             this.getProcess().exit(1);
         }
@@ -42,10 +42,10 @@ export class DeleteModuleCommand extends ProcessAware implements CommandInterfac
             this.getProcess().exit(1);
         }
 
-        if (!this._notExistModule(nameModule)) {
+        if (this._notExistModule(nameModule)) {
             const chalk = require('chalk');
             console.log(
-                chalk.red.underline.bold(`Module already exist "${nameModule}"\n`)
+                chalk.red.underline.bold(`Module not exist "${nameModule}"\n`)
             );
             this.getProcess().exit(1);
         }
@@ -54,63 +54,15 @@ export class DeleteModuleCommand extends ProcessAware implements CommandInterfac
         const path = require('path');
         const modulePath = `${this.getModulesPath()}${path.sep}${nameModule}`;
 
-
-       // this._updateConfigFiles(nameModule);
-        //this._updateImportDev(nameModule);
+        FsUtils.rmDirRecursive(modulePath);
+        this._updateConfigFiles(nameModule);
+        this._updateImportDev(nameModule);
 
         const chalk = require('chalk');
         console.log(
             chalk.green.underline.bold(`Module "${nameModule}" deleted\n`)
         );
     }
-
-    /**
-     * @param {string} name
-     * @return {boolean}
-     * @private
-     */
-    _validateName(name) {
-        let isValid = false;
-        if ((DeleteModuleCommand.REGEX_NAME.exec(name)) !== null) {
-            isValid = true;
-        }
-        return isValid
-    }
-
-    /**
-     * @param name
-     * @return {boolean}
-     * @private
-     */
-    _validateCurrentDirectory(name) {
-        const fs = require('fs');
-        let isValid = false;
-
-        if (fs.existsSync(this.getApplicationPath()) && fs.existsSync(this.getModulesPath())) {
-            isValid = true;
-        }
-
-        return isValid;
-    }
-
-    /**
-     * @param name
-     * @private
-     */
-    _notExistModule(name) {
-        const fs = require('fs');
-        let isValid = true;
-        let content = fs.readdirSync(this.getModulesPath());
-        for (let cont = 0; content.length > cont; cont++) {
-            if (name === content[cont]) {
-                isValid = false;
-                break;
-            }
-        }
-
-        return isValid;
-    }
-
 
     /**
      *
@@ -121,11 +73,54 @@ export class DeleteModuleCommand extends ProcessAware implements CommandInterfac
         const fs = require('fs');
         const path = require('path');
 
+        let content = fs.readdirSync(this.getConfigPath());
+        let body;
+        let pathFile;
+        for (let cont = 0; content.length > cont; cont++) {
+            if (content[cont].startsWith('module')) {
+                pathFile = `${this.getConfigPath()}${path.sep}${content[cont]}`;
+                body = JSON.parse(fs.readFileSync(pathFile).toString());
+
+                let index =body.findIndex((element) => {
+                    return element.name === name;
+                });
+
+                body.splice(index, 1);
+                fs.writeFileSync(pathFile, JSON.stringify(body, null, '    ') );
+            }
+        }
+
     }
 
+    /**
+     * @param {string} nameModule
+     * @private
+     */
     _updateImportDev(nameModule) {
         const fs = require('fs');
         const path = require('path');
+        const regexp = RegExp(DeleteModuleCommand.REGEX_COMMENT,'g');
 
+        let importPathDev = `${this.getApplicationPath()}${path.sep}development${path.sep}dashboard${path.sep}import.js`;
+        let body = fs.readFileSync(importPathDev).toString();
+
+        let matches;
+        let startIndex;
+        let endIndex;
+
+        while ((matches = regexp.exec(body)) !== null) {
+
+            if (matches[0].includes( `start ${nameModule}`)) {
+                startIndex = body.indexOf(matches[0]);
+            }
+
+            if (matches[0].includes( `end ${nameModule}`)) {
+                endIndex = body.indexOf(matches[0]) + matches[0].length;
+            }
+        }
+
+        if (startIndex > 0 && endIndex > 0) {
+            fs.writeFileSync(importPathDev, [body.slice(0, startIndex - 1), body.slice(endIndex + 1)].join(''));
+        }
     }
 }

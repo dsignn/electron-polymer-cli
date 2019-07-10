@@ -3,8 +3,7 @@
  */
 
 import {Application} from "./Application";
-import {CreateModuleCommand, DeleteModuleCommand, ListCommand} from "./command/index";
-import * as process from "process";
+import {CreateModuleCommand, DeleteModuleCommand, ListModuleCommand} from "./command/index";
 export class Main {
 
     /**
@@ -38,30 +37,49 @@ export class Main {
         this._application.addCommand(deleteModuleCommand);
 
         /**
-         * @type {ListCommand}
+         * @type {ListModuleCommand}
          */
-        let helpCommand = new ListCommand();
+        let helpCommand = new ListModuleCommand();
         helpCommand.setProcess(process);
         this._application.addCommand(helpCommand);
-
-        helpCommand.setCommands(this._application.getCommands());
     }
 
     /**
      *
      * @param process
      */
-    process() {
+    public process() {
+        /**
+         *
+         */
         if (this._application.hasCommandInProcess() === undefined && !this._application.isThirdParameterOption()) {
 
+            console.log(this._application.getProcess().argv[2]);
             if (this._application.getProcess().argv[2]) {
                 const chalk = require('chalk');
                 console.log(
                     chalk.red.underline.bold(`Command "${this._application.getProcess().argv[2].split(' ')[0]}" not found\n`)
                 );
+                this._application.getProcess().exit(-1);
+            } else {
+                this._application.getProcess().argv.splice(2, 0, '--help')
             }
-            // WORKAROUND to set default
-            this._application.getProcess().argv.splice(2, 0, 'list')
+        }
+
+        if (this._application.startThirdParameterOptionWith('-h') || this._application.startThirdParameterOptionWith('--help')) {
+            const chalk = require('chalk');
+            const figlet = require('figlet');
+
+            console.log(
+                chalk.green(
+                    figlet.textSync('FLUID NEXT',
+                        {
+                            font : "3D Diagonal",
+                            horizontalLayout: 'full'
+                        }
+                    )
+                )
+            );
         }
 
         this._application.execProcess();
