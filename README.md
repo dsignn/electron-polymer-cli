@@ -1,2 +1,3 @@
-# electron-polymer-cli
-Tool writed with node, used to create module for the player
+# ELECTRON POLYMER CLI
+
+Provides the command line to manage the module of the 

@@ -131,7 +131,7 @@ window.customElements.define("${nameModule}-index", ${nameModuleCamelCase.charAt
                 "name" : `${nameModule}-index`,
                 "path" : "index.js"
             },
-            "autoloadsWs": [
+            "autoloadsWc": [
                 {
                     "name" : `${nameModule}-icons`,
                     "path" : "element/icons/icons.js"
