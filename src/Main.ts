@@ -3,7 +3,7 @@
  */
 
 import {Application} from "./Application";
-import {CreateModuleCommand, DeleteModuleCommand, ListModuleCommand} from "./command/index";
+import { CreateModuleCommand, DeleteModuleCommand, ListModuleCommand, AddClassModuleCommand, AddWebComponentModuleCommand} from "./command/index";
 export class Main {
 
     /**
@@ -28,9 +28,22 @@ export class Main {
         createModuleCommand.setProcess(process);
         this._application.addCommand(createModuleCommand);
 
+        /**
+         * @type {AddClassModuleCommand}
+         */
+        let addClassModuleCommand = new AddClassModuleCommand();
+        addClassModuleCommand.setProcess(process);
+        this._application.addCommand(addClassModuleCommand);
+        
+        /**
+         * @type {AddWebComponentModule}
+         */
+        let addWebComponentModuleCommand = new AddWebComponentModuleCommand();
+        addWebComponentModuleCommand.setProcess(process);
+        this._application.addCommand(addWebComponentModuleCommand);
 
         /**
-         * @type {CreateModuleCommand}
+         * @type {DeleteModuleCommand}
          */
         let deleteModuleCommand = new DeleteModuleCommand();
         deleteModuleCommand.setProcess(process);

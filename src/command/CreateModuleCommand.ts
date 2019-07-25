@@ -8,28 +8,18 @@ import {AbstractModuleCommand} from "./AbstractModuleCommand";
  */
 export class CreateModuleCommand extends AbstractModuleCommand implements CommandInterface {
 
-    description: string = 'Create module';
+    public description: string = 'Create module';
 
-    name: string = 'create-module --name <name>';
+    public name: string = 'create-module --name <name>';
 
-    alias: string = 'crm';
+    public alias: string = 'crm';
 
-    option: string = '';
+    public option: string = '';
 
     /**
      * @param {string} nameModule
      */
     public action(nameModule : string) {
-        /**
-         * Validate name module
-         */
-        if (!this._validateName(nameModule)) {
-            const chalk = require('chalk');
-            console.log(
-                chalk.red.underline.bold(`Invalid name accept "${AbstractModuleCommand.REGEX_NAME}" given "${nameModule}"\n`)
-            );
-            this.getProcess().exit(1);
-        }
         /**
          * Validate current working directory
          */
@@ -41,6 +31,9 @@ export class CreateModuleCommand extends AbstractModuleCommand implements Comman
             this.getProcess().exit(1);
         }
 
+        /**
+         * Check if the module exist
+         */
         if (!this._notExistModule(nameModule)) {
             const chalk = require('chalk');
             console.log(

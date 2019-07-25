@@ -9,11 +9,11 @@ export abstract class AbstractModuleCommand extends ProcessAware {
 
     static REGEX_COMMENT = '(\\/\\*[\\w\\\'\\s\\r\\n\\-*]*\\*\\/)|(\\/\\/[\\w\\s\\\']*)|(\\<![\\-\\-\\s\\w\\>\\/]*\\>)';
 
-    /**
-     *
-     * @param {string} nameModule
-     */
-    public abstract action(nameModule: string);
+    // /**
+    //  *
+    //  * @param {string} nameModule
+    //  */
+    // public abstract action(nameModule: string);
 
     /**
      * @param {string} name
