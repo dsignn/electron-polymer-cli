@@ -8,4 +8,4 @@ tsc:
 
 ## rsync-sideline:		Run rsync on sideline project
 rsync-player: tsc
-	 rsync -axv --exclude .idea --exclude node_modules --exclude ./git  . ../electron-polymer/node_modules//@fluidnext/electron-polymer-cli/
+	 rsync -axv --exclude .idea --exclude node_modules --exclude ./git  . ../electron-polymer/node_modules/@fluidnext/electron-polymer-cli/

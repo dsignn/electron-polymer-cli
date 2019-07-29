@@ -1,13 +1,11 @@
 import {CommandInterface} from "./CommandInterface";
-import {Command} from "commander";
-import {ProcessAware} from "../process";
 import {FsUtils} from "../util";
-import {AbstractModuleCommand} from "./AbstractModuleCommand";
+import {AbstractCommand} from "./AbstractCommand";
 
 /**
  *
  */
-export class DeleteModuleCommand extends AbstractModuleCommand implements CommandInterface {
+export class DeleteModuleCommand extends AbstractCommand implements CommandInterface {
 
     description: string = 'Create module';
 
@@ -21,33 +19,29 @@ export class DeleteModuleCommand extends AbstractModuleCommand implements Comman
      * @param {string} nameModule
      */
     action(nameModule : string) {
+
         /**
          * Validate name module
          */
-        if (!this._validateName(nameModule)) {
-            const chalk = require('chalk');
-            console.log(
-                chalk.red.underline.bold(`Invalid name accept "${AbstractModuleCommand.REGEX_NAME}" given "${nameModule}"\n`)
-            );
-            this.getProcess().exit(1);
+        if (this.validatorContainer.get('ModuleNameValidation').isValid(nameModule)) {
+            this.errorMessage(`Invalid name accept fdfds "${AbstractCommand.REGEX_NAME_MODULE}" given "${nameModule}"\n`);
         }
+
         /**
          * Validate current working directory
          */
-        if (!this._validateCurrentDirectory(nameModule)) {
-            const chalk = require('chalk');
-            console.log(
-                chalk.red.underline.bold(`Invalid working directory "${this.getProcess().cwd()}" run cli from the root of the project\n`)
-            );
-            this.getProcess().exit(1);
+        if (!this.validatorContainer.get('DirectoryExist').isValid([this.getApplicationPath(), this.getModulesPath()])) {
+            this.errorMessage(`Invalid working directory "${this.getProcess().cwd()}" run cli from the root of the project\n`);
         }
 
-        if (this._notExistModule(nameModule)) {
-            const chalk = require('chalk');
-            console.log(
-                chalk.red.underline.bold(`Module not exist "${nameModule}"\n`)
-            );
-            this.getProcess().exit(1);
+        /**
+         * Check if the module exist
+         */
+        this.validatorContainer.get('DirectoryExistInPath').setDefaultPath(
+            '/home/visa/Project/3.0fluild/electron-polymer/app/module'
+        );
+        if (!this.validatorContainer.get('DirectoryExistInPath').isValid(nameModule)) {
+            this.errorMessage(`Module already exist "${nameModule}"\n`);
         }
 
         const fs = require('fs');

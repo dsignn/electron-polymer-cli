@@ -1,12 +1,10 @@
 import {CommandInterface} from "./CommandInterface";
-
-import {ProcessAware} from "../process";
-import {AbstractModuleCommand} from "./AbstractModuleCommand";
+import {AbstractCommand} from "./AbstractCommand";
 
 /**
  *
  */
-export class ListModuleCommand extends AbstractModuleCommand implements CommandInterface {
+export class ListModuleCommand extends AbstractCommand implements CommandInterface {
 
 
     description: string = 'List command';
@@ -22,12 +20,8 @@ export class ListModuleCommand extends AbstractModuleCommand implements CommandI
         /**
          * Validate current working directory
          */
-        if (!this._validateCurrentDirectory(nameModule)) {
-            const chalk = require('chalk');
-            console.log(
-                chalk.red.underline.bold(`Invalid working directory "${this.getProcess().cwd()}" run cli from the root of the project\n`)
-            );
-            this.getProcess().exit(1);
+        if (!this.validatorContainer.get('DirectoryExist').isValid([this.getApplicationPath(), this.getModulesPath()])) {
+            this.errorMessage(`Invalid working directory "${this.getProcess().cwd()}" run cli from the root of the project\n`);
         }
 
         const fs = require('fs');
