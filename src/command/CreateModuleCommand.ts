@@ -1,12 +1,10 @@
 import {CommandInterface} from "./CommandInterface";
-import {Command} from "commander";
-import {ProcessAware} from "../process";
-import {AbstractModuleCommand} from "./AbstractModuleCommand";
+import {AbstractCommand} from "./AbstractCommand";
 
 /**
  *
  */
-export class CreateModuleCommand extends AbstractModuleCommand implements CommandInterface {
+export class CreateModuleCommand extends AbstractCommand implements CommandInterface {
 
     public description: string = 'Create module';
 
@@ -15,32 +13,36 @@ export class CreateModuleCommand extends AbstractModuleCommand implements Comman
     public alias: string = 'crm';
 
     public option: string = '';
-
+    
+    
     /**
      * @param {string} nameModule
      */
     public action(nameModule : string) {
+
+        /**
+         * Validate name module
+         */
+        if (!this.validatorContainer.get('ModuleNameValidation').isValid(nameModule)) {
+            this.errorMessage(`Invalid name accept fdfds "${AbstractCommand.REGEX_NAME_WEB_COMPONENT}" given "${nameModule}"\n`);
+        }
+
         /**
          * Validate current working directory
          */
-        if (!this._validateCurrentDirectory(nameModule)) {
-            const chalk = require('chalk');
-            console.log(
-                chalk.red.underline.bold(`Invalid working directory "${this.getProcess().cwd()}" run cli from the root of the project\n`)
-            );
-            this.getProcess().exit(1);
+        if (!this.validatorContainer.get('DirectoryExist').isValid([this.getApplicationPath(), this.getModulesPath()])) {
+            this.errorMessage(`Invalid working directory "${this.getProcess().cwd()}" run cli from the root of the project\n`);
         }
 
         /**
          * Check if the module exist
          */
-        if (!this._notExistModule(nameModule)) {
-            const chalk = require('chalk');
-            console.log(
-                chalk.red.underline.bold(`Module already exist "${nameModule}"\n`)
-            );
-            this.getProcess().exit(1);
+        this.validatorContainer.get('DirectoryExistInPath').setDefaultPath(this.getModulesPath());
+        if (this.validatorContainer.get('DirectoryExistInPath').isValid(nameModule)) {
+            this.errorMessage(`Module already exist "${nameModule}"\n`);
         }
+
+
 
         const fs = require('fs');
         const path = require('path');
@@ -51,13 +53,10 @@ export class CreateModuleCommand extends AbstractModuleCommand implements Comman
         fs.writeFileSync(`${modulePath}${path.sep}config.js`, this.templateConfig(nameModule));
         fs.writeFileSync(`${modulePath}${path.sep}index.js`, this.templateEntryPoint(nameModule));
         fs.writeFileSync(`${modulePath}${path.sep}element${path.sep}icons${path.sep}icons.js`, this.templateIcon(nameModule));
+        fs.writeFileSync(this.getDevImportPath(), this.updateImportDev(nameModule));
         this._updateConfigFiles(nameModule);
-        this._updateImportDev(nameModule);
 
-        const chalk = require('chalk');
-        console.log(
-            chalk.green.underline.bold(`Module "${nameModule}" created\n`)
-        );
+        this.successMessage(`Module "${nameModule}" created\n`);
     }
 
     /**
@@ -112,6 +111,8 @@ window.customElements.define("${nameModule}-index", ${nameModuleCamelCase.charAt
 
     /**
      * @param {string} nameModule
+     * @param {string} type
+     * @return {string | {title: string; name: string; icon: string; configEntryPoint: string; entryPoint: {name: string; path: string}; autoloadsWc: {name: string; path: string}[]}}
      */
     public templatePackageJson(nameModule: string, type: string = 'string') {
         let UcFirstNameModule = nameModule.charAt(0).toUpperCase() + nameModule.slice(1);
@@ -131,7 +132,6 @@ window.customElements.define("${nameModule}-index", ${nameModuleCamelCase.charAt
                 }
             ]
         };
-
         return type === 'string' ? JSON.stringify(template, null, '    ') : template;
     }
 
@@ -170,7 +170,7 @@ window.customElements.define('${nameModule}-icons', class ${nameModuleCamelCase.
      * @param {string} name
      * @private
      */
-    protected _updateConfigFiles(name: string) {
+    protected _updateConfigFiles(nameModule: string) {
         const fs = require('fs');
         const path = require('path');
         let content = fs.readdirSync(this.getConfigPath());
@@ -181,21 +181,20 @@ window.customElements.define('${nameModule}-icons', class ${nameModuleCamelCase.
                 pathFile = `${this.getConfigPath()}${path.sep}${content[cont]}`;
                 body = JSON.parse(fs.readFileSync(pathFile).toString());
 
-                body.push(this.templatePackageJson(name, 'object'));
+                body.push(this.templatePackageJson(nameModule, 'object'));
                 fs.writeFileSync(pathFile, JSON.stringify(body, null, '    ') );
             }
         }
     }
 
     /**
-     *
-     * @param {string} name
-     * @private
+     * @param {string} nameModule
+     * @return string
      */
-    protected _updateImportDev(nameModule) {
+    protected updateImportDev(nameModule: string) {
         const fs = require('fs');
         const path = require('path');
-        const regexp = RegExp(AbstractModuleCommand.REGEX_COMMENT,'g');
+        const regexp = RegExp(AbstractCommand.REGEX_COMMENT,'g');
 
         let importPathDev = `${this.getApplicationPath()}${path.sep}development${path.sep}dashboard${path.sep}import.js`;
         let body = fs.readFileSync(importPathDev).toString();
@@ -222,7 +221,9 @@ import '../../module/${nameModule}/element/icons/icons'
         }
 
         if (index > 0) {
-            fs.writeFileSync(importPathDev, [body.slice(0, index), include, body.slice(index)].join(''));
+            body = [body.slice(0, index), include, body.slice(index)].join('');
         }
+
+        return body;
     }
 }

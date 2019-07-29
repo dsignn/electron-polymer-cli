@@ -9,7 +9,8 @@
   "scripts": {
     "run": "node bin/electron-polymer.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "run-dev": "tsc | node bin/electron-polymer.js"
   },
   "repository": {
     "type": "git",
@@ -32,18 +33,20 @@
   },
   "homepage": "https://github.com/fluidnext/electron-polymer-cli#readme",
   "dependencies": {
+    "@fluidnext/library": "github:fluidnext/library",
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.6",
     "camelcase": "^5.3.1",
+    "chai": "^4.2.0",
     "chalk": "^2.4.2",
     "clear": "^0.1.0",
     "commander": "^2.20.0",
-    "figlet": "^1.2.3",
-    "semver": "^6.2.0",
-    "@types/chai": "^4.1.7",
-    "@types/mocha": "^5.2.6",
-    "chai": "^4.2.0",
     "cross-env": "^5.2.0",
+    "figlet": "^1.2.3",
     "jest": "^24.5.0",
     "mocha": "^6.0.2",
+    "react-router-relay": "^0.14.0",
+    "semver": "^6.2.0",
     "ts-jest": "^24.0.0",
     "ts-node": "^8.0.3",
     "typescript": "^3.3.3333"
