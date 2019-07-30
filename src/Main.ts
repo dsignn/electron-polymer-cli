@@ -4,7 +4,7 @@
 
 import {Application} from "./Application";
 import { CreateModuleCommand, DeleteModuleCommand, ListModuleCommand, CreateClassModuleCommand, CreateWebComponentModuleCommand, AbstractCommand} from "./command/index";
-import {ContainerInterface} from "@fluidnext/library/src/container/index";
+import {ContainerInterface} from "@dsign/library/src/container/index";
 export class Main {
 
     /**
@@ -16,7 +16,7 @@ export class Main {
     /**
      *
      */
-    private _container: ContainerInterface = new (require('@fluidnext/library').container.Container)();
+    private _container: ContainerInterface = new (require('@dsign/library').container.Container)();
 
     /**
      *
@@ -75,27 +75,27 @@ export class Main {
 
         this._container.set(
             'ModuleNameValidation',
-            new (require('@fluidnext/library').validation.RegExValidation)(AbstractCommand.REGEX_NAME_MODULE, 'gm')
+            new (require('@dsign/library').validation.RegExValidation)(AbstractCommand.REGEX_NAME_MODULE, 'gm')
         );
 
         this._container.set(
             'WebComponentNameValidation',
-            new (require('@fluidnext/library').validation.RegExValidation)(AbstractCommand.REGEX_NAME_WEB_COMPONENT, 'gm')
+            new (require('@dsign/library').validation.RegExValidation)(AbstractCommand.REGEX_NAME_WEB_COMPONENT, 'gm')
         );
 
         this._container.set(
             'DirectoryExist',
-            new (require('@fluidnext/library').validation.DirectoryExistValidator)()
+            new (require('@dsign/library').validation.DirectoryExistValidator)()
         );
 
         this._container.set(
             'DirectoryExistInPath',
-            new (require('@fluidnext/library').validation.DirectoryExistInPathValidator)()
+            new (require('@dsign/library').validation.DirectoryExistInPathValidator)()
         );
 
         this._container.set(
             'ClassNameValidation',
-            new (require('@fluidnext/library').validation.RegExValidation)(AbstractCommand.REGEX_NAME_CLASS, 'gm')
+            new (require('@dsign/library').validation.RegExValidation)(AbstractCommand.REGEX_NAME_CLASS, 'gm')
         );
     }
 
@@ -127,7 +127,7 @@ export class Main {
 
             console.log(
                 chalk.green(
-                    figlet.textSync('FLUID NEXT',
+                    figlet.textSync('DSIGN P-CLI',
                         {
                             font : "3D Diagonal",
                             horizontalLayout: 'full'

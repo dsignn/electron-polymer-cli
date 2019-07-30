@@ -1,5 +1,5 @@
 {
-  "name": "@fluidnext/electron-polymer-cli",
+  "name": "@dsignn/player-cli",
   "version": "1.0.0",
   "description": "Tool writed with node, used to create module for the player",
   "main": "bin/electron-polymer.js",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fluidnext/electron-polymer-cli.git"
+    "url": "git+https://github.com/dsignn/player-cli.git"
   },
   "keywords": [
     "Git",
@@ -26,14 +26,14 @@
   },
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/fluidnext/electron-polymer-cli/issues"
+    "url": "https://github.com/dsignn/player-cli/issues"
   },
   "engines": {
     "node": ">=10.16.0"
   },
-  "homepage": "https://github.com/fluidnext/electron-polymer-cli#readme",
+  "homepage": "https://github.com/dsignn/player-cli#readme",
   "dependencies": {
-    "@fluidnext/library": "github:fluidnext/library",
+    "@dsign/library": "github:dsignn/library",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
     "camelcase": "^5.3.1",
@@ -53,6 +53,7 @@
   },
   "devDependencies": {
     "@types/node": "^12.0.12",
+    "dexie": "^2.0.4",
     "polymer-cli": "^1.9.10"
   }
 }

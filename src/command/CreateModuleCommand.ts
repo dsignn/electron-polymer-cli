@@ -70,7 +70,7 @@ export class CreateModuleCommand extends AbstractCommand implements CommandInter
 /**
  * Config file to load services
  */
-class ${nameModuleCamelCase.charAt(0).toUpperCase() + nameModuleCamelCase.slice(1)}Config extends require("@fluidnext/library").container.ContainerAware {
+class ${nameModuleCamelCase.charAt(0).toUpperCase() + nameModuleCamelCase.slice(1)}Config extends require("@dsign/library").container.ContainerAware {
             
     init() {
 
