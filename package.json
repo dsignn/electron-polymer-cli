@@ -1,5 +1,5 @@
 {
-  "name": "@dsignn/player-cli",
+  "name": "@dsign/player-cli",
   "version": "1.0.0",
   "description": "Tool writed with node, used to create module for the player",
   "main": "bin/electron-polymer.js",
