@@ -17,7 +17,7 @@ if (!semver.satisfies(process.version, config.engines.node)) {
     let rawVersion = config.engines.node.replace(/[^\d\.]*/, '');
     console.log(
         chalk.green(
-            figlet.textSync('FLUID NEXT',
+            figlet.textSync('DSIGN',
                 {
                     font : "3D Diagonal",
                     horizontalLayout: 'full'

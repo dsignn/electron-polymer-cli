@@ -43,6 +43,7 @@
     "commander": "^2.20.0",
     "cross-env": "^5.2.0",
     "figlet": "^1.2.3",
+    "fs-extra": "^8.1.0",
     "jest": "^24.5.0",
     "mocha": "^6.0.2",
     "react-router-relay": "^0.14.0",

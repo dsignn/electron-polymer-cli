@@ -1,5 +1,4 @@
 import {CommandInterface} from "./CommandInterface";
-import {FsUtils} from "../util";
 import {AbstractCommand} from "./AbstractCommand";
 
 /**
@@ -44,11 +43,11 @@ export class DeleteModuleCommand extends AbstractCommand implements CommandInter
             this.errorMessage(`Module already exist "${nameModule}"\n`);
         }
 
-        const fs = require('fs');
+        const fse = require('fs-extra');
         const path = require('path');
         const modulePath = `${this.getModulesPath()}${path.sep}${nameModule}`;
 
-        FsUtils.rmDirRecursive(modulePath);
+        fse.removeSync(modulePath);
         this._updateConfigFiles(nameModule);
         this._updateImportDev(nameModule);
 
